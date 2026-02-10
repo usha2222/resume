@@ -9,7 +9,7 @@ export const createResume = async (req, res) => {
         const { title } = req.body
         //create new resume
         const newResume = await Resume.create({ userId, title })
-        return res.status(200).res({ success: true, message: "Resume created Successfully", resume: newResume })
+        return res.status(200).json({ success: true, message: "Resume created Successfully", resume: newResume })
     }
     catch (error) {
         return res.status(400).json({ success: false, message: error.message, })
@@ -26,10 +26,10 @@ export const deleteResume = async (req, res) => {
         //delete new resume
         const deletedResume = await Resume.findOneAndDelete({ userId, _id: resumeId })
         if (!deletedResume) {
-            return res.status(400).res({ success: false, message: "Resume deleted Successfully" })
+            return res.status(400).json({ success: false, message: "Resume not found or already deleted" })
         }
         //return success message
-        return res.status(200).res({ success: true, message: "Resume deleted Successfully" })
+        return res.status(200).json({ success: true, message: "Resume deleted Successfully" })
     }
     catch (error) {
         return res.status(400).json({ success: false, message: error.message, })
@@ -45,14 +45,14 @@ export const getResumeById = async (req, res) => {
         //delete new resume
         const resume = await Resume.findOne({ userId, _id: resumeId })
         if (!resume) {
-            return res.status(400).res({ success: false, message: "Resume not found" })
+            return res.status(400).json({ success: false, message: "Resume not found" })
         }
 
         resume._v = undefined;
         resume.createdAt = undefined;
         resume.updatedAt = undefined;
         //return success message
-        return res.status(200).res({ success: true, message: "Resume get Successfully", resume: resume })
+        return res.status(200).json({ success: true, message: "Resume get Successfully", resume: resume })
     }
     catch (error) {
         return res.status(400).json({ success: false, message: error.message, })
@@ -67,10 +67,10 @@ export const getPublicResumeById = async (req, res) => {
         const { resumeId } = req.params;
         const resume = await Resume.findOne({ public: true, _id: resumeId });
         if (!resume) {
-            return res.status(400).res({ success: false, message: "Resume not found" })
+            return res.status(400).json({ success: false, message: "Resume not found" })
         }
         //return success message
-        return res.status(200).res({ success: true, message: "Resume get Successfully", resume: resume })
+        return res.status(200).json({ success: true, message: "Resume get Successfully", resume: resume })
 
     }
     catch (error) {
@@ -82,9 +82,11 @@ export const getPublicResumeById = async (req, res) => {
 //PUT:/api/resumes/update
 export const updateResume = async (req, res) => {
     try {
-        const { resumeId, resumeData, removeBackground } = req.params;
+        const { resumeId, resumeData, removeBackground } = req.body;
         const userId = req.userId;
         const image = req.file;
+    
+        console.log(resumeData)
         let resumeDataCopy = JSON.parse(resumeData)
 
         if (image) {
@@ -102,8 +104,8 @@ export const updateResume = async (req, res) => {
             resumeDataCopy.personal_info.image=response.url
         }
         
-        const resume = await Resume.findByIdAndUpdate({ userId, _id: resumeId }, resumeDataCopy, { new: true });
-        return res.status(200).send({ success: true, message: 'Saved Successfully', resume: resume })
+        const resume = await Resume.findOneAndUpdate({ userId, _id: resumeId }, resumeDataCopy, { new: true });
+        return res.status(200).json({ success: true, message: 'Saved Successfully', resume: resume })
 
 
     }
@@ -115,7 +117,5 @@ export const updateResume = async (req, res) => {
 }
 
 
-export default {
-    createResume, deleteResume
 
-}
+export default {createResume, deleteResume ,getResumeById,getPublicResumeById,updateResume}

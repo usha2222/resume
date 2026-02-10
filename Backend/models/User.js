@@ -15,7 +15,6 @@ password:{
     required:true
 },
 
-
 },
 {timestamps:true}
 )

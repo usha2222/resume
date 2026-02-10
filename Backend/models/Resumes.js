@@ -15,14 +15,14 @@ const ResumeSchema=new mongoose.Schema({
     },
       accent_color:{
         type:String,
-        default:'#B82F6',
+        default:'#B82F60',
     },
     professional_summary:{
         type:String,
         default:''
     },
 
-     skiils:{
+     skills:{
         type:String,
     },
     personal_info:{
@@ -59,7 +59,7 @@ const ResumeSchema=new mongoose.Schema({
             degree:{type:String},
             field:{type:String},
             graduation_date:{type:String},
-        gpa:{type:String},
+             gpa:{type:String},
         }
     ],
     
