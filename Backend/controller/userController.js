@@ -2,6 +2,7 @@ import User from '../models/User.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import Resume from '../models/Resumes.js'
+import transporter from '../config/nodemailer.js'
 const generateToken = (userId) => {
     const token = jwt.sign({ userId }, process.env.JWT_SECRETE, { expiresIn: '7d' })
     return token;
@@ -115,4 +116,97 @@ catch (error) {
 
     }
 }
-export default {loginUser,registerUser,getUserById,getUserResumes}
+//send password reset otp
+export const sendResetOpt = async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({
+            success: false,
+            message: "Email is required"
+        })
+    }
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+
+        }
+        const otp = String(Math.floor(100000 + Math.random() * 900000))
+
+        user.resetOtp = otp;
+        user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;  //15min
+        await user.save({ validateBeforeSave: false });
+
+        const mailOption = {
+            from: process.env.SENDER_EMAIL,
+            to: user.email,
+            subject: ' Password Reset OTP',
+            text: `Your password reset OTP is ${otp}. Reset your password with this OTP.`
+        }
+        const info = await transporter.sendMail(mailOption);
+        res.json({ success: true, message: 'Otp sent to your email successfully', info })
+    }
+    catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+//reset user password
+export const resetPassword = async (req, res) => {
+    const {email,otp,newPassword}=req.body
+    if (!email || !otp || !newPassword) {
+        return res.status(400).json({
+            success: false,
+            message: "All fields are required"
+        })
+    }
+    console.log(otp);
+    try {
+        const user = await User.findOne({ email })
+        if(!user){
+
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+            
+        }
+        if(user.resetOtp === '' || user.resetOtp !== String(otp)){
+  return res.status(400).json({
+                success: false,
+                message: "Invalid OTP"
+            })
+        }
+        if(user.resetOtpExpireAt < Date.now()){
+            return res.status(400).json({
+                success: false,
+                message: "OTP Expired"
+            })  
+        }
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        user.resetOtp = '';
+        user.resetOtpExpireAt = 0;
+        await user.save({ validateBeforeSave: false });
+        return res.status(200).json({
+            success: true,
+            message: "Password reset successfully"
+        })
+
+    }
+    catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+
+}
+
+export default {loginUser,registerUser,getUserById,getUserResumes,resetPassword,sendResetOpt}
