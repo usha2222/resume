@@ -136,10 +136,8 @@ const DashBoard = () => {
               <button type="submit" className='w-full bg-green-500 text-white py-2 rounded-lg mt-4 hover:bg-green-600 transition-colors'>Update Title</button>
               <XIcon className='absolute top-2 right-2 cursor-pointer text-slate-400 hover:text-slate-600 transition-colors ' onClick={() => {setEditResumeId(false); setTitle('')}} />
             </div>
-
           </form>
         )}
-
       </div>
 
 

@@ -9,11 +9,11 @@ export default function Footer() {
                 }
             `}</style>
             
-            <footer className="flex flex-col items-center justify-center w-full py-20 bg-slate-700 text-white/70">
+            <footer className="flex flex-col items-center justify-center w-full py-20 bg-green-400 text-white/90">
                 <img src="logo.svg" alt="logo"/>
                 <p className="mt-4 text-center">Copyright © 2025 <a href="https://prebuiltui.com">Resume Builder</a>. All rights reservered.</p>
                 <div className="flex items-center gap-4 mt-5">
-                    <a href="#" className="hover:-translate-y-0.5 transition-all duration-300">
+                    <a href="#" className="hover:-translate-y-0.5 transition-all duration-300"> 
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" stroke="#fff" strokeOpacity=".5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>

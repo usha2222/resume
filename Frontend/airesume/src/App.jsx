@@ -7,7 +7,10 @@ import ResumeBuilder from './pages/ResumeBuilder'
 import Preview from './pages/Preview.jsx'
 import DashBoard from './pages/DashBoard.jsx'
 import NotFound from './pages/NotFound.jsx'
+import ResetPasword from './pages/ResetPasword.jsx'
 const App = () => {
+
+  
   return (
     <>
       <Routes>
@@ -18,6 +21,7 @@ const App = () => {
           <Route path='builder/:resumeId' element={<ResumeBuilder />} />
         </Route>
         <Route path='view/:resumeId' element={<Preview />} />
+        <Route path='/reset-password' element={<ResetPasword/>}/>
         <Route path='login' element={<Login />} />
         <Route path='*' element={<NotFound/>}/>
       </Routes>
